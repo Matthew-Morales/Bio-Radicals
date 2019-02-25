@@ -1,0 +1,55 @@
+CREATE TABLE IF NOT EXISTS product (
+  id integer PRIMARY KEY, 
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS customer (
+  id integer PRIMARY KEY, 
+  name text
+);
+
+CREATE TABLE IF NOT EXISTS salesperson (
+  id integer PRIMARY KEY, 
+  username text, 
+  full_name text
+);
+
+CREATE TABLE IF NOT EXISTS lot (
+  id integer PRIMARY KEY, 
+  product_id integer,
+  manufacture_date text,
+  quantity_boxes integer, 
+  release_date text, 
+  expiration_date text, 
+  backorder_start text, 
+  backorder_end,
+  FOREIGN KEY (product_id) REFERENCES product (id)
+);
+
+CREATE TABLE IF NOT EXISTS reservation (
+  id INTEGER PRIMARY KEY, 
+  sold_to_party integer, 
+  ship_to_party integer, 
+  sales_rep text, 
+  batch_id integer, 
+  FOREIGN KEY (sold_to_party) REFERENCES customer (id), 
+  FOREIGN KEY (sales_rep) REFERENCES salesperson (full_name),
+  FOREIGN KEY (batch_id) REFERENCES lot (id)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+  doc_id integer PRIMARY KEY,
+  doc_date text, 
+  sold_to_party integer, 
+  item integer, 
+  batch_id integer, 
+  status text, 
+  delivered_date text, 
+  order_quantity integer, 
+  confirm_quantity integer, 
+  created text, 
+  FOREIGN KEY (sold_to_party) REFERENCES customer (id), 
+  FOREIGN KEY (batch_id) REFERENCES lot (id), 
+  FOREIGN KEY (created) REFERENCES salesperson (username)
+);
+

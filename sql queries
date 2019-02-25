@@ -1,0 +1,45 @@
+Querying Notes
+
+==== Structure to Execute Query & Print Results ====
+cur = conn.cursor()
+sql = ""
+cur.execute(sql)
+rows = cur.fetchall()
+for row in rows:
+    print row
+
+-------------------
+
+==== Customer Reserve Report ====
+# item #, description, qty/box, start ship date, lot#, exp date,
+    # <qty forecast>, <mos. res.>, <est. usage per mo.>
+# booked qty, shipped qty, remaining qty, actual usage per month, est.months remaining,
+# #mos dat'g left, overage or underage
+# comments, estimated run out date
+
+
+==== Prints Reserve Report for Customer ====
+# customer id in where statement
+# MISSING: QTY/BOX column - name and lot id
+
+select p.id, p.name, 'qty/box', l.id, l.expiration_date, r.booked_qty, r.shipped_qty, r.remaining_qty,
+printf("%.1f",(julianday(l.expiration_date) - julianday(date('now')))/30.42)
+from customer c
+left join reservation r on r.sold_to_party = c.id
+left join lot l on l.id = r.batch_id
+left join product p on p.id = l.product_id
+where c.id = '1000005'
+
+
+==== Prints Reserve Report for Customer ====
+ === Product Information actually exists ===
+# customer id in where statement
+# MISSING: QTY/BOX column - name and lot id
+
+select p.id, p.name, 'qty/box', l.id, l.expiration_date, r.booked_qty, r.shipped_qty, r.remaining_qty,
+printf("%.1f",(julianday(l.expiration_date) - julianday(date('now')))/30.42)
+from product p
+left join lot l on l.product_id = p.id
+left join reservation r on r.batch_id = l.id
+left join customer c on c.id = r.sold_to_party
+where c.id = '1000005'

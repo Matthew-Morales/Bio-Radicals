@@ -28,6 +28,9 @@ for each in active_sheet:
     2 | ship_to_party
     4 | sales_rep
     7 | batch_id
+    9 | booked qty
+    10 | shipped qty
+    11 | remaining qty
     '''
 
     row = []
@@ -35,6 +38,10 @@ for each in active_sheet:
     row.append(str(each[2].value))
     row.append(str(each[4].value))
     row.append(str(each[7].value))
+    row.append(str(each[9].value))
+    row.append(str(each[10].value))
+    row.append(str(each[11].value))
+
     sqlite.create_reservation(conn, row)
 
 
@@ -48,12 +55,12 @@ for each in active_sheet:
     if (str(each[5].value), str(each[6].value)) not in products:
         products.append((str(each[5].value), str(each[6].value)))
 
-    #print(" | ".join(row))
+    print(" | ".join(row))
 
 conn.commit()
 
-#print(salesperson_fullname)
 for fullname in salesperson_fullname:
+    #print(fullname)
     sqlite.create_salesperson_fullname(conn, (None, fullname))
 
 for product in products:
