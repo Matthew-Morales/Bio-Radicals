@@ -1,3 +1,4 @@
 test.txt
 pythonsqlite.db
 *.xlsx
+__pycache__

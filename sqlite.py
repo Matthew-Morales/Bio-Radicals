@@ -1,6 +1,17 @@
 import sqlite3
+import xlsxwriter
+import reports_generator
 from sqlite3 import Error
 
+
+'''
+TODO:
+Task 1: Edit lot, product, or reservation table to include QTY/BOX field
+Task 2: Put excel creation into it's own function/class
+Task 3: Remove traces of salesperson username
+'''
+
+#creates database connection - don't use it, doesn't work
 def create_connection(db_file):
     try:
         conn = sqlite3.connect(db_file)
@@ -10,6 +21,8 @@ def create_connection(db_file):
     finally:
         conn.close()
 
+#default table creator
+#create_table_sql - a string sql statement to create a table
 def create_table(conn, create_table_sql):
     try:
         c = conn.cursor()
@@ -17,6 +30,7 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
+# ==== Creates Table Entries ====
 def create_order(conn, order):
     sql = ''' INSERT INTO orders (doc_id, doc_date, sold_to_party, item, batch_id, status, 
                                   delivered_date, order_quantity, confirm_quantity, created)
@@ -62,12 +76,14 @@ def create_lot(conn, lot):
     return cur.lastrowid
 
 def create_reservation(conn, reservation):
-    sql = ''' INSERT INTO reservation (sold_to_party, ship_to_party, sales_rep, batch_id)
-              VALUES(?,?,?,?) '''
+    sql = ''' INSERT INTO reservation (sold_to_party, ship_to_party, sales_rep, batch_id, booked_qty, shipped_qty, remaining_qty)
+              VALUES(?,?,?,?,?,?,?) '''
     cur = conn.cursor()
     cur.execute(sql, reservation)
     return cur.lastrowid
 
+
+# ==== Other DB Queries ====
 def select_all_from_table(conn, table):
     cur = conn.cursor()
     cur.execute("SELECT * FROM " + table)
@@ -77,6 +93,7 @@ def select_all_from_table(conn, table):
     for row in rows:
         print(row)
 
+# ------------------------
 
 if __name__ == '__main__':
     sql_create_product_table = """
@@ -122,6 +139,9 @@ if __name__ == '__main__':
                                           ship_to_party integer, 
                                           sales_rep text, 
                                           batch_id integer, 
+                                          booked_qty integer, 
+                                          shipped_qty integer, 
+                                          remaining_qty integer,
                                           FOREIGN KEY (sold_to_party) REFERENCES customer (id), 
                                           FOREIGN KEY (sales_rep) REFERENCES salesperson (full_name),
                                           FOREIGN KEY (batch_id) REFERENCES lot (id)
@@ -159,16 +179,11 @@ if __name__ == '__main__':
         create_table(conn, sql_create_reservation_table)
         create_table(conn, sql_create_orders_table)
 
-        #cur = conn.cursor()
-        #cur.execute("SELECT * from product where id = '500'")
-        #cur.execute("SELECT * FROM orders WHERE created = 'P1PRFCE1P'")
-        #cur.execute("SELECT * FROM orders WHERE sold_to_party = '1004282'")
-        #cur.execute("SELECT * FROM customer WHERE id='1004282'")
-        #rows = cur.fetchall()
-        #for row in rows:
-        #    print(row)
 
-        select_all_from_table(conn, "reservation")
+
+        # Example customer ids: 1001883, 1000239, 1000005
+        reports_generator.reserve_report(1000005, conn)
+
 
     else:
         print("Error! cannot create the database connection.")
