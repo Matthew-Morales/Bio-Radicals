@@ -1,9 +1,12 @@
 import xlsxwriter
 from pathlib import Path    # pathlib uses the correct format of path for the local OS
+import os
 
 def reserve_report(customer_id, conn):
     filename = 'customer' + str(customer_id) + '.xlsx'
     # delete the next 2 lines if pathing causes error, change file_path to filename in line 12
+    if not os.path.exists("GeneratedReports"):
+        os.makedirs("GeneratedReports")
     exported_folder = Path("GeneratedReports/")
     file_path = str((exported_folder / filename).resolve()) # path of the generated report in string
 
