@@ -1,30 +1,36 @@
 import xlsxwriter
+from pathlib import Path    # pathlib uses the correct format of path for the local OS
 
 def reserve_report(customer_id, conn):
+    filename = 'customer' + str(customer_id) + '.xlsx'
+    # delete the next 2 lines if pathing causes error, change file_path to filename in line 12
+    exported_folder = Path("GeneratedReports/")
+    file_path = str((exported_folder / filename).resolve()) # path of the generated report in string
+
     cur = conn.cursor()
 
-    workbook = xlsxwriter.Workbook('customer' + str(customer_id) + '.xlsx')
+    workbook = xlsxwriter.Workbook(file_path)   # create excel sheet
     worksheet = workbook.add_worksheet()
     sheet_row = 0
     sheet_col = 0
-    worksheet.write(sheet_row, sheet_col, "Subject:")
+    worksheet.write(sheet_row, sheet_col, "Subject:")  # row 1
     worksheet.write(sheet_row, sheet_col + 1, "Customer1")
     sheet_row += 1
 
-    worksheet.write(sheet_row, sheet_col + 1, "Account # " + str(customer_id))
+    worksheet.write(sheet_row, sheet_col + 1, "Account # " + str(customer_id))  # row 2
     sheet_row += 1
 
-    worksheet.write(sheet_row, sheet_col, "")
+    worksheet.write(sheet_row, sheet_col, "")   # row 3
     sheet_row += 1
 
-    worksheet.write(sheet_row, sheet_col, "Date:")
+    worksheet.write(sheet_row, sheet_col, "Date:")  # row 4
     worksheet.write(sheet_row, sheet_col + 1, "Date")
     sheet_row += 1
 
-    worksheet.write(sheet_row, sheet_col, "")
+    worksheet.write(sheet_row, sheet_col, "")  # row 5
     sheet_row += 1
 
-    worksheet.write(sheet_row, sheet_col, "ITEM #")
+    worksheet.write(sheet_row, sheet_col, "ITEM #")  # row 6
     worksheet.write(sheet_row, sheet_col + 1, "DESCRIPTION")
     worksheet.write(sheet_row, sheet_col + 2, "QTY/BOX")
     worksheet.write(sheet_row, sheet_col + 3, "LOT #")
@@ -36,7 +42,7 @@ def reserve_report(customer_id, conn):
     worksheet.write(sheet_row, sheet_col + 9, "Comments")
     sheet_row += 1
 
-    worksheet.write(sheet_row, sheet_col, "")
+    worksheet.write(sheet_row, sheet_col, "")  # row 7
     sheet_row += 1
 
     cur.execute(
@@ -61,7 +67,7 @@ def reserve_report(customer_id, conn):
 
     )
     '''
-    rows = cur.fetchall()
+    rows = cur.fetchall()   # return list of items from the query
     for row in rows:
         print(row)
 
