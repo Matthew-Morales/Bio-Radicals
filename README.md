@@ -13,13 +13,11 @@ project
 │   sql queries
 │   sql.txt
 │   sqlite.py
-│   ...
 │
 └─── Data folder
 │   │   anemiasales.xlsx
 │   │   Liquid IA Anemia data.xlsx
 │   │   rReport.xlsx
-│   │   ...
 │   
 └─── GeneratedReports folder
        │   customer1000005.xlsx
