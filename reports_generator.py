@@ -51,53 +51,47 @@ def reserve_report(customer_id, conn):
     worksheet.write(sheet_row, sheet_col, "ITEM #", cell_format)  # row 6
     worksheet.write(sheet_row, sheet_col + 1, "DESCRIPTION", cell_format)
     worksheet.write(sheet_row, sheet_col + 2, "QTY/BOX", cell_format)
-    worksheet.write(sheet_row, sheet_col + 3, "LOT #", cell_format)
-    worksheet.write(sheet_row, sheet_col + 4, "EXP. DATE", cell_format)
-    worksheet.write(sheet_row, sheet_col + 5, "Product Allocation", cell_format)
-    worksheet.write(sheet_row, sheet_col + 6, "Shipped Quantity (Indy)", cell_format)
-    worksheet.write(sheet_row, sheet_col + 7, "Remaining Allocation", cell_format)
-    worksheet.write(sheet_row, sheet_col + 8, "#mos dat'g left", cell_format)
-    worksheet.write(sheet_row, sheet_col + 9, "Comments", cell_format)
+    worksheet.write(sheet_row, sheet_col + 3, "SHIPPED TO", cell_format)
+    worksheet.write(sheet_row, sheet_col + 4, "NAME", cell_format)
+    worksheet.write(sheet_row, sheet_col + 5, "LOT #", cell_format)
+    worksheet.write(sheet_row, sheet_col + 6, "EXP. DATE", cell_format)
+    worksheet.write(sheet_row, sheet_col + 7, "Product Allocation", cell_format)
+    worksheet.write(sheet_row, sheet_col + 8, "Shipped Quantity (Indy)", cell_format)
+    worksheet.write(sheet_row, sheet_col + 9, "Remaining Allocation", cell_format)
+    worksheet.write(sheet_row, sheet_col + 10, "#mos dat'g left", cell_format)
+    worksheet.write(sheet_row, sheet_col + 11, "Comments", cell_format)
     sheet_row += 1
 
     worksheet.write(sheet_row, sheet_col, "")  # row 7
     sheet_row += 1
 
-    cur.execute(
-        """
-        select p.id, p.name, 'qty/box', l.id, l.expiration_date, r.booked_qty, r.shipped_qty, r.remaining_qty
-        from product p 
-        left join lot l on l.product_id = p.id
-        left join reservation r on r.batch_id = l.id
-        left join customer c on c.id = r.sold_to_party
-        where c.id =""" + str(customer_id))
-    '''
-    cur.execute(
-        """
-        select p.id, p.name, 'qty/box', l.id, l.expiration_date, r.booked_qty, r.shipped_qty, r.remaining_qty,
-        printf("%.1f",(julianday(l.expiration_date) - julianday(date('now')))/30.42)
-        from customer c
-        left join reservation r on r.sold_to_party = c.id
-        left join lot l on l.id = r.batch_id
-        left join product p on p.id = l.product_id
-        where c.id =""" + str(customer_id)
+    sql = """
+                SELECT p.id, p.name, 'qty/box', r.ship_to_party, c2.name, r.batch_id, l.expiration_date, r.booked_qty, r.shipped_qty, r.remaining_qty,
+                printf("%.1f",(julianday(l.expiration_date) - julianday(date('now')))/30.42)
+                FROM product p 
+                LEFT JOIN lot l on p.id = l.product_id 
+                LEFT JOIN reservation r on l.id = r.batch_id
+                LEFT JOIN customer c on r.sold_to_party = c.id
+                LEFT JOIN customer c2 on r.ship_to_party = c2.id
+                WHERE l.id is not null AND c.id = """ + str(customer_id)
+    cur.execute(sql)
 
-    )
-    '''
     rows = cur.fetchall()   # return list of items from the query
     for row in rows:
         print(row)
-        date_time = datetime.strptime(str(row[4]).split(' ')[0], '%Y-%m-%d')    #set date format
+        date_time = datetime.strptime(str(row[6]).split(' ')[0], '%Y-%m-%d')    #set date format
         worksheet.write(sheet_row, sheet_col, str(row[0]))
         worksheet.write(sheet_row, sheet_col + 1, str(row[1]))
         worksheet.write(sheet_row, sheet_col + 2, str(row[2]))
         worksheet.write(sheet_row, sheet_col + 3, str(row[3]))
-        worksheet.write(sheet_row, sheet_col + 4, date_time, date_format)
+        worksheet.write(sheet_row, sheet_col + 4, str(row[4]))
         worksheet.write(sheet_row, sheet_col + 5, str(row[5]))
-        worksheet.write(sheet_row, sheet_col + 6, str(row[6]))
+        worksheet.write(sheet_row, sheet_col + 6, date_time, date_format)
         worksheet.write(sheet_row, sheet_col + 7, str(row[7]))
-        worksheet.write(sheet_row, sheet_col + 8, '=ROUND(((-TODAY()) + $E%d)/30.42,1)' % (sheet_row+1))    # formula to calculate mos dat'g left
-        worksheet.write(sheet_row, sheet_col + 9, "")
+        worksheet.write(sheet_row, sheet_col + 8, str(row[8]))
+        worksheet.write(sheet_row, sheet_col + 9, str(row[9]))
+        worksheet.write(sheet_row, sheet_col + 10, '=ROUND(((-TODAY()) + $G%d)/30.42,1)' % (sheet_row+1))    # formula to calculate mos dat'g left
+        worksheet.write(sheet_row, sheet_col + 11, "")
         sheet_row += 1
 
         worksheet.write(sheet_row, sheet_col, "")
