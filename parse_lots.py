@@ -1,12 +1,17 @@
 from openpyxl import load_workbook
 import sqlite, sqlite3
 from decimal import Decimal, ROUND_HALF_UP
+from pathlib import Path
 
 
 database = "pythonsqlite.db"
 conn = sqlite3.connect(database)
 
-sheet = load_workbook("Liquid IA Anemia data.xlsx")
+dataFolder = Path("Data")
+filename = "Liquid IA Anemia data.xlsx"
+file_path = str((dataFolder / filename).resolve())
+
+sheet = load_workbook(file_path)
 active_sheet = sheet.active
 
 header_row = 0

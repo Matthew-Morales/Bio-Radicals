@@ -1,4 +1,5 @@
-test.txt
 pythonsqlite.db
 *.xlsx
 __pycache__
+GeneratedReports
+Data

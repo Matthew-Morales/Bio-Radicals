@@ -1,10 +1,16 @@
 from openpyxl import load_workbook
 import sqlite, sqlite3
+from pathlib import Path
+
 
 database = "pythonsqlite.db"
 conn = sqlite3.connect(database)
 
-sheet = load_workbook("rReport.xlsx")
+dataFolder = Path("Data")
+filename = "rReport.xlsx"
+file_path = str((dataFolder / filename).resolve())
+
+sheet = load_workbook(file_path)
 active_sheet = sheet.active
 
 header_row = 0

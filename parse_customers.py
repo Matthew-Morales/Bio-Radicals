@@ -1,11 +1,19 @@
 from openpyxl import load_workbook
 import sqlite, sqlite3
+from pathlib import Path
+
 
 database = "pythonsqlite.db"
 conn = sqlite3.connect(database)
 
-anemiaSheet = load_workbook("anemiasales.xlsx")
-custSheet = load_workbook("rReport.xlsx")
+dataFolder = Path("Data")
+filename1 = "anemiasales.xlsx"
+filename2 = "rReport.xlsx"
+file_path1 = str((dataFolder / filename1).resolve())
+file_path2 = str((dataFolder / filename2).resolve())
+
+anemiaSheet = load_workbook(file_path1)
+custSheet = load_workbook(file_path2)
 
 anemia_sheet = anemiaSheet.active
 cust_sheet = custSheet.active
