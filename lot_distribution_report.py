@@ -88,7 +88,10 @@ def generate(customer_id, conn):
                 product_type = umbrella_product
                 worksheet.write(sheet_row, sheet_col, "")
                 sheet_row += 1
+        elif (product_type == product):
+            pass
         else:
+            product_type = product
             worksheet.write(sheet_row, sheet_col, "")
             sheet_row += 1
         date_time = datetime.strptime(str(row[6]).split(' ')[0], '%Y-%m-%d')    #set date format
