@@ -34,7 +34,7 @@ for lot in lots:
 conn.commit()
 #create reservation
 #choose 1003151 as customer since they already have data
-#reservation (sold_to_party, ship_to_party, sales_rep, batch_id, booked_qty, shipped_qty, remaining_qty)
+#reservation(sold_to_party, ship_to_party, sales_rep, batch_id, booked_qty, shipped_qty, remaining_qty)
 reservation_0 = ['1003151', '', '', '001051', '10', '0', '10']
 reservation_1 = ['1003151', '', '', '001052', '10', '0', '10']
 reservation_2 = ['1003151', '', '', '001081', '10', '0', '10']

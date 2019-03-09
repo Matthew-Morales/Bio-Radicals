@@ -1,10 +1,11 @@
 from tkinter import *
 from tkinter import messagebox
 import reports_generator as rg
+import consolidated_lot_report as clr
 import sqlite as sq
 
 #Global output list storing the customer IDS the UI iterates through to produce reports
-OUTPUT_LIST = []
+OUTPUT_LIST = [1003151]
 
 
 class NonExistant(Exception):
@@ -63,14 +64,30 @@ def remove_from_list():
     except NonExistant:
         messagebox.showinfo("Notice","ID not found in stored Customer ID list")
 
-
-def generate_report():
+### MAKE A CLASS 
+def generate_reserve_report():
     '''Function mapped to the Generate Lot Distribution Report
        button. Produces an excel spreadsheet in a Data folder
        in the working directory.
     '''
     for entry in OUTPUT_LIST:
         rg.reserve_report(entry, conn)
+
+def generate_consolidated_lot_report():
+    '''Function mapped to the Generate Lot Distribution Report
+       button. Produces an excel spreadsheet in a Data folder
+       in the working directory.
+    '''
+    for entry in OUTPUT_LIST:   
+        clr.consolidated_lot_report(entry, conn)
+
+##def generate_consolidated_lot_report():
+##        '''Function mapped to the Generate Lot Distribution Report
+##       button. Produces an excel spreadsheet in a Data folder
+##       in the working directory.
+##    '''
+##    for entry in OUTPUT_LIST:
+##        rg.reserve_report(entry, conn)
     
 if __name__ == '__main__':
         
@@ -96,11 +113,11 @@ if __name__ == '__main__':
 
 
     # WORKS
-    Button(master, text='Generate Lot Distribution Report', command=generate_report).grid(row=3, column=0, sticky=W, pady=4)
+    Button(master, text='Generate Lot Distribution Report', command=generate_reserve_report).grid(row=3, column=0, sticky=W, pady=4)
     # NEEDS UNIQUE OUTPUT
-    Button(master, text='Generate Lot Compressed Report', command=generate_report).grid(row=4, column=0, sticky=W, pady=4)
+    Button(master, text='Generate Lot Compressed Report', command=generate_consolidated_lot_report).grid(row=4, column=0, sticky=W, pady=4)
     # NEEDS UNIQUE OUTPUT
-    Button(master, text='Generate Ship-To Customer Reserve Report', command=generate_report).grid(row=5, column=0, sticky=W, pady=4)
+    Button(master, text='Generate Ship-To Customer Reserve Report', command=generate_reserve_report).grid(row=5, column=0, sticky=W, pady=4)
 
 
 
