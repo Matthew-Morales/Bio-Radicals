@@ -42,8 +42,9 @@ def generate(customer_id, conn):
     sheet_row += 1
 
     date_format = workbook.add_format({'num_format': 'mm/dd/yy'})
+    current_date_format = workbook.add_format({'num_format': 'mmm d, yyyy'})
     worksheet.write(sheet_row, sheet_col, "Date:")  # row 4
-    worksheet.write(sheet_row, sheet_col + 1, "=TODAY()", date_format)
+    worksheet.write(sheet_row, sheet_col + 1, "=TODAY()", current_date_format)
     sheet_row += 1
 
     worksheet.write(sheet_row, sheet_col, "")  # row 5
@@ -74,7 +75,9 @@ def generate(customer_id, conn):
                 LEFT JOIN reservation r on l.id = r.batch_id
                 LEFT JOIN customer c on r.sold_to_party = c.id
                 LEFT JOIN customer c2 on r.ship_to_party = c2.id
-                WHERE l.id is not null AND c.id = """ + str(customer_id)
+                WHERE l.id is not null AND c.id = {0}
+                ORDER BY p.name;
+                """.format(str(customer_id))
     cur.execute(sql)
 
     rows = cur.fetchall()   # return list of items from the query

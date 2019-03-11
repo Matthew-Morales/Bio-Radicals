@@ -3,8 +3,8 @@ from pathlib import Path    # pathlib uses the correct format of path for the lo
 import os
 from datetime import datetime
 import helper
-def consolidated_lot_report(customer_id, conn):
-    filename = 'customer' + str(customer_id) + '.xlsx'
+def generate(customer_id, conn):
+    filename = 'consolidated_lot_report_' + str(customer_id) + '.xlsx'
     # delete the next 2 lines if pathing causes error, change file_path to filename in line 12
     if not os.path.exists("GeneratedReports"):
         os.makedirs("GeneratedReports")

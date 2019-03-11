@@ -32,7 +32,7 @@ def generate(customer_id, conn):
     sheet_row = 0
     sheet_col = 0
     worksheet.write(sheet_row, sheet_col, "Subject:")  # row 1
-    worksheet.write(sheet_row, sheet_col + 1, "SoldToParty" + customer_id)
+    worksheet.write(sheet_row, sheet_col + 1, "ShipToParty" + str(customer_id))
     sheet_row += 1
 
     worksheet.write(sheet_row, sheet_col + 1, "Account # " + str(customer_id))  # row 2
@@ -42,8 +42,9 @@ def generate(customer_id, conn):
     sheet_row += 1
 
     date_format = workbook.add_format({'num_format': 'mm/dd/yy'})
+    current_date_format = workbook.add_format({'num_format': 'mmm d, yyyy'})
     worksheet.write(sheet_row, sheet_col, "Date:")  # row 4
-    worksheet.write(sheet_row, sheet_col + 1, "=TODAY()", date_format)
+    worksheet.write(sheet_row, sheet_col + 1, "=TODAY()", current_date_format)
     sheet_row += 1
 
     worksheet.write(sheet_row, sheet_col, "")  # row 5
@@ -71,7 +72,10 @@ def generate(customer_id, conn):
                 LEFT JOIN lot l on p.id = l.product_id 
                 LEFT JOIN reservation r on l.id = r.batch_id
                 LEFT JOIN customer c on r.ship_to_party = c.id
-                WHERE l.id is not null AND c.id = """ + str(customer_id)
+                WHERE l.id is not null AND c.id = {0}
+                GROUP BY r.batch_id
+                ORDER BY l.expiration_date;
+                """.format(str(customer_id))
     cur.execute(sql)
 
     rows = cur.fetchall()   # return list of items from the query

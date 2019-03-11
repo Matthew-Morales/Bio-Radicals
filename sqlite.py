@@ -182,7 +182,7 @@ if __name__ == '__main__':
 
 
         # Example customer ids: 1001883, 1000239, 1000005
-        reports_generator.reserve_report(1000005, conn)
+        reports_generator.reserve_report(1003151, conn)
 
 
     else:

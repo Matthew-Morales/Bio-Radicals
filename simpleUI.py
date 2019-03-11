@@ -1,11 +1,12 @@
 from tkinter import *
 from tkinter import messagebox
-import reports_generator as rg
+import lot_distribution_report as ldr
 import consolidated_lot_report as clr
+import ship_to_reserve_report as shiptor
 import sqlite as sq
 
 #Global output list storing the customer IDS the UI iterates through to produce reports
-OUTPUT_LIST = [1003151]
+OUTPUT_LIST = []
 
 
 class NonExistant(Exception):
@@ -65,29 +66,29 @@ def remove_from_list():
         messagebox.showinfo("Notice","ID not found in stored Customer ID list")
 
 ### MAKE A CLASS 
-def generate_reserve_report():
+def generate_lot_distribution_report():
     '''Function mapped to the Generate Lot Distribution Report
        button. Produces an excel spreadsheet in a Data folder
        in the working directory.
     '''
     for entry in OUTPUT_LIST:
-        rg.reserve_report(entry, conn)
+        ldr.generate(entry, conn)
 
 def generate_consolidated_lot_report():
-    '''Function mapped to the Generate Lot Distribution Report
+    '''Function mapped to the Generate Consolidated Lot Report
        button. Produces an excel spreadsheet in a Data folder
        in the working directory.
     '''
     for entry in OUTPUT_LIST:   
-        clr.consolidated_lot_report(entry, conn)
+        clr.generate(entry, conn)
 
-##def generate_consolidated_lot_report():
-##        '''Function mapped to the Generate Lot Distribution Report
-##       button. Produces an excel spreadsheet in a Data folder
-##       in the working directory.
-##    '''
-##    for entry in OUTPUT_LIST:
-##        rg.reserve_report(entry, conn)
+def generate_ship_to_reserve_report():
+    '''Function mapped to the Generate Ship to Reserve Report
+        button. Produces an excel spreadsheet in a Data folder
+        in the working directory.
+     '''
+    for entry in OUTPUT_LIST:
+       shiptor.generate(entry, conn)
     
 if __name__ == '__main__':
         
@@ -113,11 +114,11 @@ if __name__ == '__main__':
 
 
     # WORKS
-    Button(master, text='Generate Lot Distribution Report', command=generate_reserve_report).grid(row=3, column=0, sticky=W, pady=4)
+    Button(master, text='Generate Lot Distribution Report', command=generate_lot_distribution_report).grid(row=3, column=0, sticky=W, pady=4)
     # NEEDS UNIQUE OUTPUT
-    Button(master, text='Generate Lot Compressed Report', command=generate_consolidated_lot_report).grid(row=4, column=0, sticky=W, pady=4)
+    Button(master, text='Generate Consolidated Lot Report', command=generate_consolidated_lot_report).grid(row=4, column=0, sticky=W, pady=4)
     # NEEDS UNIQUE OUTPUT
-    Button(master, text='Generate Ship-To Customer Reserve Report', command=generate_reserve_report).grid(row=5, column=0, sticky=W, pady=4)
+    Button(master, text='Generate Ship-To Customer Reserve Report', command=generate_ship_to_reserve_report).grid(row=5, column=0, sticky=W, pady=4)
 
 
 
